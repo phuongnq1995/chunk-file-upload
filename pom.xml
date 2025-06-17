@@ -28,6 +28,11 @@
 	</scm>
 	<properties>
 		<java.version>21</java.version>
+
+		<commons.io.version>2.16.1</commons.io.version>
+		<imgscalr-lib.version>4.2</imgscalr-lib.version>
+		<thumbnailator.version>0.4.20</thumbnailator.version>
+		<twelvemonkeys.imageio.version>3.12.0</twelvemonkeys.imageio.version>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -39,19 +44,35 @@
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>software.amazon.awssdk</groupId>
-			<artifactId>s3</artifactId>
-			<version>2.28.13</version>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>${commons.io.version}</version>
 			<exclusions>
 				<exclusion>
-					<groupId>software.amazon.awssdk</groupId>
-					<artifactId>netty-nio-client</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>software.amazon.awssdk</groupId>
-					<artifactId>apache-client</artifactId>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-imaging</artifactId>
+			<version>1.0.0-alpha6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.imgscalr</groupId>
+			<artifactId>imgscalr-lib</artifactId>
+			<version>${imgscalr-lib.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.coobird</groupId>
+			<artifactId>thumbnailator</artifactId>
+			<version>${thumbnailator.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.twelvemonkeys.imageio</groupId>
+			<artifactId>imageio-core</artifactId>
+			<version>${twelvemonkeys.imageio.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
