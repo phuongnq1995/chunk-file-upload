@@ -1,27 +1,29 @@
 const baseUrl = 'http://localhost:8080';
+const startUploadingChunkUrl = `${baseUrl}/upload-chunk-parallel/start`;
+const processUploadingChunkUrl = `${baseUrl}/upload-chunk-parallel/process`;
+const completeUploadingChunkUrl = `${baseUrl}/upload-chunk-parallel/complete`;
+
 let uploadedFiles = [];
 const chunkSize = 200 * 1024; // Set the desired chunk size (200KB in this example)
 
 // Initialize the application
 document.addEventListener('DOMContentLoaded', function() {
-    setupFileInputs();
-    setupUploadButtons();
+    const fileInput = document.getElementById("recoveryFile");
+
+    setupFileInputs(fileInput, 'recoveryFile');
+    setupUploadButtons(fileInput);
     displayUploadedFiles();
 });
 
-function setupFileInputs() {
-    const recoveryInput = document.getElementById('recoveryFile');
-    const overrideInput = document.getElementById('overrideFile');
+function setupFileInputs(fileInput, fileInputId) {
 
-    recoveryInput.addEventListener('change', (e) => handleFileSelect(e, 'recovery'));
-    overrideInput.addEventListener('change', (e) => handleFileSelect(e, 'override'));
+    fileInput.addEventListener('change', (e) => handleFileSelect(e));
 
     // Drag and drop functionality
-    setupDragAndDrop('recoveryFile', 'recovery');
-    setupDragAndDrop('overrideFile', 'override');
+    setupDragAndDrop(fileInputId);
 }
 
-function setupDragAndDrop(inputId, type) {
+function setupDragAndDrop(inputId) {
     const label = document.querySelector(`label[for="${inputId}"]`);
 
     label.addEventListener('dragover', (e) => {
@@ -41,19 +43,19 @@ function setupDragAndDrop(inputId, type) {
         const files = e.dataTransfer.files;
         if (files.length > 0) {
             document.getElementById(inputId).files = files;
-            handleFileSelect({ target: { files: files } }, type);
+            handleFileSelect({ target: { files: files } });
         }
         label.style.borderColor = '#ccc';
         label.style.background = '#fafafa';
     });
 }
 
-function handleFileSelect(event, type) {
+function handleFileSelect(event) {
     const file = event.target.files[0];
     if (!file) return;
 
-    const fileInfo = document.getElementById(`${type}FileInfo`);
-    const uploadBtn = document.getElementById(`${type}UploadBtn`);
+    const fileInfo = document.getElementById("recoveryFileInfo");
+    const uploadBtn = document.getElementById("recoveryUploadBtn");
 
     // Display file information
     fileInfo.innerHTML = `
@@ -71,31 +73,30 @@ function handleFileSelect(event, type) {
     fileInfo.classList.add('show');
 
     // Enable upload button when both file and document type are selected
-    checkUploadReady(type);
+    checkUploadReady();
 }
 
-function setupUploadButtons() {
+function setupUploadButtons(fileInput) {
     document.getElementById('recoveryUploadBtn').addEventListener('click', () => {
-        handleUpload('recovery');
-    });
-
-    document.getElementById('overrideUploadBtn').addEventListener('click', () => {
-        handleUpload('override');
+        handleUpload(fileInput);
     });
 }
 
-function checkUploadReady(type) {
-    const fileInput = document.getElementById(`${type}File`);
-    const uploadBtn = document.getElementById(`${type}UploadBtn`);
+function checkUploadReady() {
+    const fileInput = document.getElementById("recoveryFile");
+    const uploadBtn = document.getElementById("recoveryUploadBtn");
 
     const hasFile = fileInput.files.length > 0;
 
     uploadBtn.disabled = !(hasFile);
 }
 
-async function handleUpload(type) {
-    const fileInput = document.getElementById(`${type}File`);
+async function handleUpload(fileInput) {
+
+    const uploadId = await startUploadingChunk();
+
     const file = fileInput.files[0];
+    const fileName = file.name;
 
     const totalChunks = Math.ceil(file.size / chunkSize);
 
@@ -106,37 +107,79 @@ async function handleUpload(type) {
         const chunk = file.slice(start, end);
 
         const percentage = Math.round((chunkIndex + 1) / totalChunks * 100);
-        setProgress(type, percentage);
+        setProgress(percentage);
 
         // Make an API call to upload the chunk to the backend
-        await uploadChunk(type, chunk, file.size, file.name, chunkIndex);
+        await processUploadingChunk(uploadId, chunk, file.size, chunkIndex);
     }
 
-    showStatus(type, `File uploaded successfully! ${type === 'recovery' ? 'Backup created.' : 'File overridden.'}`, 'success');
+    // Make an API call to complete the upload
+    await completeUploadingChunk(uploadId, fileName);
+
+    showStatus("File uploaded successfully!", 'success');
 };
 
-async function uploadChunk(type, file, fileLength, fileName, chunkIndex) {
+async function startUploadingChunk() {
+    try {
+        const response = await fetch(startUploadingChunkUrl, {
+            method: "POST"
+        });
+
+        if (!response.ok) {
+            showStatus(`Upload failed: `, 'error');
+            throw new Error("Error uploading chunk.");
+        }
+        const json = await response.json();
+        return json.uploadId;
+    } catch (error) {
+        console.error('Upload error:', error);
+        showStatus(`Upload failed: ${error.message}`, 'error');
+    }
+}
+
+async function completeUploadingChunk(uploadId, fileName) {
+    try {
+        const response = await fetch(completeUploadingChunkUrl, {
+            method: "POST",
+            headers: {"Content-Type": "application/json",},
+            body: JSON.stringify({
+                uploadId: uploadId,
+                fileName: fileName
+            })
+        });
+
+        if (!response.ok) {
+            showStatus(`Upload failed: `, 'error');
+            throw new Error("Error uploading chunk.");
+        }
+    } catch (error) {
+        console.error('Upload error:', error);
+        showStatus(`Upload failed: ${error.message}`, 'error');
+    }
+}
+
+async function processUploadingChunk(uploadId, file, fileLength, chunkIndex) {
     const formData = new FormData();
     formData.append("file", file);
+    formData.append("uploadId", uploadId);
     formData.append("fileLength", fileLength);
-    formData.append("fileName", fileName);
     formData.append("chunkIndex", chunkIndex);
     formData.append("chunkLength", chunkSize);
 
     try {
-        const response = await fetch(`${baseUrl}/upload-chunk-${type}`, {
+        const response = await fetch(processUploadingChunkUrl, {
             method: "POST",
             body: formData,
         });
 
         if (!response.ok) {
-            showStatus(type, `Upload failed: `, 'error');
+            showStatus(`Upload failed: `, 'error');
             throw new Error("Error uploading chunk.");
         }
     } catch (error) {
         console.error('Upload error:', error);
-        setProgress(type, 0);
-        showStatus(type, `Upload failed: ${error.message}`, 'error');
+        setProgress(0);
+        showStatus(`Upload failed: ${error.message}`, 'error');
     }
 }
 
@@ -157,7 +200,7 @@ function displayUploadedFiles() {
         fileItem.className = 'file-item';
         fileItem.innerHTML = `
             <div class="file-details">
-                <div class="file-type-icon ${file.type}">${file.type === 'recovery' ? '🔄' : '⚡'}</div>
+                <div class="file-type-icon ${file.type}">🔄</div>
                 <div>
                     <div style="font-weight: 600; color: #333;">${file.name}</div>
                     <div style="color: #666; font-size: 14px;">
@@ -173,8 +216,8 @@ function displayUploadedFiles() {
     });
 }
 
-function setProgress(type, percentage) {
-    const progressBar = document.getElementById(`${type}Progress`);
+function setProgress(percentage) {
+    const progressBar = document.getElementById("recoveryProgress");
     const progressFill = progressBar.querySelector('.progress-fill');
 
     progressBar.classList.add('show');
@@ -188,8 +231,8 @@ function setProgress(type, percentage) {
     }
 }
 
-function showStatus(type, message, statusType) {
-    const statusDiv = document.getElementById(`${type}Status`);
+function showStatus(message, statusType) {
+    const statusDiv = document.getElementById("recoveryStatus");
     statusDiv.textContent = message;
     statusDiv.className = `status-message show ${statusType}`;
 
