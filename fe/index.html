@@ -2,98 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document Upload - Recovery & Override</title>
-    <link rel="stylesheet" href="index.css">
+    <title>Upload file</title>
 </head>
 <body>
-<div class="container">
-    <div class="header">
-        <h1>Document Upload System</h1>
-        <p>Upload your documents using Recovery or Override mode</p>
-    </div>
-
-    <!-- Parallel Upload Section -->
-    <div class="upload-section recovery">
-        <div class="section-header">
-            <div class="section-icon">🔄</div>
-            <div class="section-title">Parallel Upload with recovery</div>
-        </div>
-        <div class="section-description">
-            Parallel upload allows you to upload a large document in multiple chunks and resume uploading in case of failure
-            Recovery mode allows you to upload documents with retry mechanism, when the upload fails in between for any reason.
-            Perfect for large documents and unstable connections.
-        </div>
-
-        <div class="file-input-wrapper">
-            <input type="file" id="recoveryFile" class="file-input" accept=".jpg,.jpeg,.png,.pdf">
-            <label for="recoveryFile" class="file-input-label">
-                <div class="file-input-content">
-                    <div class="file-icon">📄</div>
-                    <div class="file-text">
-                        <strong>Choose File</strong><br>or drag and drop here
-                    </div>
-                </div>
-            </label>
-        </div>
-
-        <div class="file-info" id="recoveryFileInfo"></div>
-
-        <button class="upload-btn" id="recoveryUploadBtn" disabled>
-            Upload parallel with Recovery
-        </button>
-
-        <div class="progress-bar" id="recoveryProgress">
-            <div class="progress-fill"></div>
-        </div>
-
-        <div class="status-message" id="recoveryStatus"></div>
-    </div>
-
-    <!-- Override Upload Section -->
-    <div class="upload-section override">
-        <div class="section-header">
-            <div class="section-icon">⚡</div>
-            <div class="section-title">Override Upload</div>
-        </div>
-        <div class="section-description">
-            Override mode replaces existing files immediately without backup.
-            Use when you need to quickly update documents and don't need version history.
-        </div>
-
-        <div class="file-input-wrapper">
-            <input type="file" id="overrideFile" class="file-input" accept=".jpg,.jpeg,.png,.pdf">
-            <label for="overrideFile" class="file-input-label">
-                <div class="file-input-content">
-                    <div class="file-icon">📄</div>
-                    <div class="file-text">
-                        <strong>Choose Override File</strong><br>or drag and drop here
-                    </div>
-                </div>
-            </label>
-        </div>
-
-        <div class="file-info" id="overrideFileInfo"></div>
-
-        <button class="upload-btn" id="overrideUploadBtn" disabled>
-            Upload with Override
-        </button>
-
-        <div class="progress-bar" id="overrideProgress">
-            <div class="progress-fill"></div>
-        </div>
-
-        <div class="status-message" id="overrideStatus"></div>
-    </div>
-
-    <!-- Uploaded Files Section -->
-    <div class="uploaded-files" id="uploadedFiles" style="display: none;">
-        <h3>Uploaded Files</h3>
-        <div class="file-list" id="fileList"></div>
-    </div>
-</div>
-
+<button id="btn-import">Upload</button>
+<input id="file-input" type="file" />
+<div id="status"></div>
 </body>
 </html>
 
-<script src="upload-parallel.js"></script>
+<script src="upload.js"></script>
