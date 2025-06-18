@@ -25,6 +25,28 @@ This project demonstrates a file upload system with support for parallel, chunke
 - After all chunks are uploaded, the client calls `/upload-chunk-parallel/complete` with the `uploadId` and final file name.
 - The server merges all chunks in order, assembles the final file, and cleans up temporary chunk files.
 
+## How Override Chunk Upload Works
+
+### 1. Start Upload Session
+- The client requests a new upload session from `/upload-chunk-override/start`.
+- The server generates a unique `uploadId` and creates a directory for incoming chunks.
+
+### 2. Split File into Chunks
+- The frontend JavaScript splits the selected file into chunks (default: 200KB per chunk).
+
+### 3. Upload Chunks (Must be Synchronized)
+- Each chunk is sent to `/upload-chunk-override/process` with:
+  - `uploadId`
+  - `chunkIndex` (order of the chunk)
+  - `fileLength`
+  - `fileName`
+  - `chunkLength`
+  - The chunk data itself
+- Multiple chunks can be uploaded
+
+### 4. Server receives chunks
+- Once server receives chunks are uploaded, server appends them to the final file by order.
+
 ## Usage
 
 1. Start server
@@ -32,12 +54,17 @@ This project demonstrates a file upload system with support for parallel, chunke
 3. Select large file upload
 
 ## API Endpoints
+#### Parallel Chunk Upload
 - `POST /upload-chunk-parallel/start` – Start a new upload, returns `uploadId`.
 - `POST /upload-chunk-parallel/process` – Upload a chunk (multipart/form-data).
 - `POST /upload-chunk-parallel/complete` – Merge chunks and complete upload.
 
+#### Override Chunk Upload
+- `POST /upload-chunk-override/start` – Start a new upload, returns `uploadId`.
+- `POST /upload-chunk-override/process` – Upload a chunk (multipart/form-data).
+
 ## Notes
-- Chunk size can be adjusted in `fe/upload-parallel.js` (`chunkSize` variable).
+- Chunk size can be adjusted in `fe/common.js` (`chunkSize` variable).
 - The backend ensures security by validating chunk paths and cleaning up after merging.
 - This approach improves reliability for large files and allows for resumable uploads or retrying failed chunks in the future.
 
