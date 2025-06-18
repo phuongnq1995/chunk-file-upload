@@ -1,12 +1,9 @@
 package org.phuongnq.chunk.fileupload.service.image;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import javax.imageio.ImageIO;
 import net.coobird.thumbnailator.Thumbnails;
-import org.phuongnq.chunk.fileupload.service.ImageHandlerService;
 import org.springframework.stereotype.Service;
 
 @Service

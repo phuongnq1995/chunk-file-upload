@@ -10,7 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.imaging.ImageInfo;
 import org.apache.commons.imaging.Imaging;
 import org.phuongnq.chunk.fileupload.config.DocumentProperties;
-import org.phuongnq.chunk.fileupload.service.ImageHandlerService;
+import org.phuongnq.chunk.fileupload.service.image.ImageHandlerService;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.io.Resource;

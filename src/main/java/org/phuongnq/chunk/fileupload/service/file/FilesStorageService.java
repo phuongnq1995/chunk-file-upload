@@ -1,28 +1,11 @@
-package org.phuongnq.chunk.fileupload.service;
+package org.phuongnq.chunk.fileupload.service.file;
 
-import java.nio.ByteBuffer;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.phuongnq.chunk.fileupload.config.DocumentProperties;
 import org.phuongnq.chunk.fileupload.model.ProcessUploadRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.util.unit.DataSize;
-import org.springframework.util.unit.DataUnit;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.*;
-import java.nio.channels.FileChannel;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
-import java.time.Instant;
-import java.util.Comparator;
-import java.util.stream.Stream;
-
-import static java.nio.file.StandardOpenOption.*;
 
 @Slf4j
 @Service

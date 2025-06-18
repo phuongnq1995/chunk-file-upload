@@ -1,4 +1,4 @@
-package org.phuongnq.chunk.fileupload.service;
+package org.phuongnq.chunk.fileupload.service.image;
 
 import java.io.File;
 import java.io.InputStream;

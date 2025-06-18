@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import javax.imageio.ImageIO;
 import lombok.extern.slf4j.Slf4j;
-import org.phuongnq.chunk.fileupload.service.ImageHandlerService;
 import org.springframework.stereotype.Service;
 
 @Slf4j

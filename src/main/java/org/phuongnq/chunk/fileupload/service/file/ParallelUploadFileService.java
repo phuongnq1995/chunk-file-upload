@@ -1,4 +1,4 @@
-package org.phuongnq.chunk.fileupload.service;
+package org.phuongnq.chunk.fileupload.service.file;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,7 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class UploadFileService {
+public class ParallelUploadFileService {
 
   private final ConcurrentHashMap<String, String> fileUploadStatus = new ConcurrentHashMap<>();
   private final DocumentProperties documentProperties;
