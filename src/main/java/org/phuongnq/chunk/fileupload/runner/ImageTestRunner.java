@@ -29,7 +29,7 @@ public class ImageTestRunner implements ApplicationRunner {
   @Override
   public void run(ApplicationArguments args) throws Exception {
 
-    Resource resource = resourceLoader.getResource("classpath:images/5000x3000.jpg");
+    /*Resource resource = resourceLoader.getResource("classpath:images/5000x3000.jpg");
 
     ImageInfo imageInfo = Imaging.getImageInfo(resource.getFile());
     log.info("Original DPI: {}", imageInfo.getPhysicalWidthDpi());
@@ -48,6 +48,6 @@ public class ImageTestRunner implements ApplicationRunner {
       } catch (IOException e) {
         throw new RuntimeException(e);
       }
-    }
+    }*/
   }
 }
